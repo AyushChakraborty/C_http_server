@@ -3,7 +3,7 @@ its an abstraction provided by the operating system that acts as an
 endpoint for comms bw the process/program and the network, it allows
 data to be sent and received using a combination of IP address which gives
 the machine info in the network, and the port number which tells about
-the specific process on the machine that is sending or receiving the data
+the specific process's socket on the machine that is sending or receiving the data
 
 a process opens up a socket using system calls, and then that socket
 is bound to the local IP address and port number hence allowing the OS
@@ -26,3 +26,13 @@ the port number specifies the specific process or service running on the server
 machine, and what the number does is help the OS of the server machine to route
 the incoming network traffic to the correct process, for egs, port 80
 is used by http servers, 443 for https, 8080 often used for web applications
+
+another caveat to keep in mind is that the server still owns the socket created when it 
+is opened and closed quickly, hence we need to reuse sockets already in use to combat this 
+issue and to handle this the SO_REUSEADDR flag is used to configure the server socket
+
+Now the on the application layer of the socket, the programmer has full control over, but
+on the other side of the socket lies the transport layer where the data travelling through
+the socket gets wrapped in the form of TCP protocol, there the programmer has no control over.
+
+The port number is the identifier for a socket of the server script

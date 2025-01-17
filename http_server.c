@@ -33,7 +33,12 @@ const char *get_file_extension(const char *filename_url_decoded) {
 
 
 const char *get_mime_type(const char *file_extension) {
-    /*given the file extension itself, find the mime type which 
+    /*given the file extension itself, find the mime type which stands for 
+    //multipurpose internet mail extensions type which is a standard way to 
+    //indicate the nature and format of a file or data, here it is used 
+    //in the header file sent by the server to the browser so that the client
+    //knows how to handle the specific type of data being sent to it as a response
+    the form of MIME tyoe is type/subtype
     */
     if (strcasecmp(file_extension, "html") == 0 || strcasecmp(file_extension, "htm") == 0) {
         return "text/html";
@@ -203,6 +208,14 @@ int main() {
     server_addr.sin_port = htons(PORT);       //htons() converts the port number to network byte order
     //which is just big endian representation of the port number
 
+    int opt = 1;   //the value that will be be set for SO_REUSEADDR
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
+        perror("setsockopt failed");
+        exit(EXIT_FAILURE); 
+    }//this allows the server to bind to the same socket even if its is busy, this is useful
+    //when the server is opened and closed very fast and hence the socket
+    //is not released from the server
+    
     //bind socket to port
     if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr))) {
         //the bind func binds the server socket to the port number and the IP address
@@ -254,4 +267,3 @@ int main() {
 
     return 0;
 }
-
